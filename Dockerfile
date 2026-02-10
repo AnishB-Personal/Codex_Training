@@ -13,6 +13,9 @@ FROM node:18-alpine
 ENV NODE_ENV=production
 WORKDIR /app
 
+# Pull patched OS packages (e.g. openssl) to satisfy Trivy HIGH/CRITICAL findings.
+RUN apk upgrade --no-cache
+
 # Copy the built app + prod deps.
 COPY --from=builder /app /app
 
