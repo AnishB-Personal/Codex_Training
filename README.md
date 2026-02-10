@@ -1,64 +1,53 @@
-# SSO Authentication PoC (OIDC)
+# Message Storage App
 
-This project is a proof of concept (PoC) for Single Sign-On (SSO) authentication using OpenID Connect (OIDC).
+A simple containerized web application that stores short messages in MongoDB and retrieves the latest 10 messages.
 
 ## Features
 
-- Authorization Code Flow + PKCE.
-- Session-based login state.
-- `/login`, `/callback`, and `/logout` endpoints.
-- Displays authenticated user claims on the home page.
-- Works with providers like Okta, Auth0, Keycloak, Azure AD, and others exposing OIDC discovery metadata.
+- Single-page UI with Send and Retrieve buttons
+- Stores messages (max 250 characters) with timestamp format `dd:mm:yyyy hh:mm:ss`
+- Retrieves the latest 10 messages, newest first
+- Runs locally with Docker Compose
 
 ## Prerequisites
 
-- Node.js 18+
-- OIDC client application configured in your identity provider:
-  - Redirect URI: `http://localhost:3000/callback`
-  - Grant type: Authorization Code
+- Docker
+- Docker Compose
 
-## Setup
+## Run Locally (Single Command)
 
-1. Install dependencies:
+1. From the project root, start the app:
 
    ```bash
-   npm install
+   docker-compose up --build
    ```
 
-2. Copy and edit env vars:
+2. Open the app in your browser:
 
-   ```bash
-   cp .env.example .env
+   ```text
+   http://localhost:3000
    ```
 
-3. Set these values in `.env`:
+3. Use the Send and Retrieve buttons to store and view messages.
 
-   - `ISSUER_URL` (discovery endpoint URL)
-   - `CLIENT_ID`
-   - `CLIENT_SECRET` (optional for public clients)
-   - `SESSION_SECRET`
+## Project Structure
 
-## Run
+- `src/server.js`: Express API + MongoDB integration
+- `public/`: Frontend assets (HTML/CSS/JS)
+- `docker-compose.yml`: App + MongoDB services
+- `Dockerfile`: App container build
 
-```bash
-npm start
-```
+## Environment Variables
 
-Open [http://localhost:3000](http://localhost:3000) and click **Login with SSO**.
+These can be configured via Docker Compose or a `.env` file:
 
-## Endpoints
+- `PORT` (default `3000`)
+- `MONGODB_URI` (default `mongodb://mongo:27017`)
+- `MONGODB_DB` (default `message_app`)
+- `MONGODB_COLLECTION` (default `messages`)
 
-- `GET /` : Home screen and login status.
-- `GET /health` : Health check endpoint.
-- `GET /login` : Starts OIDC authorization.
-- `GET /callback` : OIDC redirect URI.
-- `GET /logout` : Clears local session and attempts provider logout.
+## API Endpoints
 
-## Notes
-
-- This is a demo PoC, not production hardened.
-- For production:
-  - Use HTTPS.
-  - Secure session storage (Redis/database).
-  - Harden cookie settings (`secure: true`, strict `sameSite` as needed).
-  - Add CSRF protections and structured logging.
+- `POST /api/messages` with JSON `{ "message": "..." }`
+- `GET /api/messages` returns latest 10 messages
+- `GET /health` health check

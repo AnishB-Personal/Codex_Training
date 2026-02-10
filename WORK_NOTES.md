@@ -1,3 +1,2 @@
-# Work Notes
-
-This file was added on the `codex/new-work-branch` branch.
+- Message storage app: Express + MongoDB.
+- Run with: docker-compose up --build
