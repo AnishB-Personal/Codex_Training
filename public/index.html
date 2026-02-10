@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Message Storage</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="container">
+      <h1>Message Storage</h1>
+
+      <section class="card">
+        <label for="messageInput">Message (max 250 characters)</label>
+        <div class="row">
+          <input
+            id="messageInput"
+            type="text"
+            maxlength="250"
+            placeholder="Type a short message"
+          />
+          <button id="sendBtn" type="button">Send</button>
+        </div>
+        <div class="row">
+          <button id="retrieveBtn" type="button" class="secondary">Retrieve Latest 10</button>
+          <span id="status" aria-live="polite"></span>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Latest Messages</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Message</th>
+              <th>Timestamp</th>
+            </tr>
+          </thead>
+          <tbody id="messagesTable">
+            <tr>
+              <td colspan="2" class="empty">No messages yet.</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>

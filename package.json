@@ -1,7 +1,7 @@
 {
-  "name": "sso-auth-poc",
+  "name": "message-storage-app",
   "version": "1.0.0",
-  "description": "Proof of concept for SSO authentication using OIDC",
+  "description": "Simple message storage and retrieval app using Express and MongoDB",
   "main": "src/server.js",
   "type": "module",
   "scripts": {
@@ -15,7 +15,6 @@
   "dependencies": {
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
-    "express-session": "^1.18.0",
-    "openid-client": "^5.6.5"
+    "mongodb": "^6.12.0"
   }
 }
