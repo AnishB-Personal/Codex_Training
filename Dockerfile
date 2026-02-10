@@ -1,15 +1,24 @@
-FROM node:18-alpine
+FROM node:18-alpine AS builder
 
 WORKDIR /app
-
-# Keep Node 18, but update npm to a patched 10.x to reduce Trivy findings in npm's bundled deps.
-RUN npm install -g npm@10.9.4
 
 COPY package.json package-lock.json ./
 RUN npm ci --omit=dev
 
 COPY . .
 
+# ---- Runtime image ----
+FROM node:18-alpine
+
+ENV NODE_ENV=production
+WORKDIR /app
+
+# Copy the built app + prod deps.
+COPY --from=builder /app /app
+
+# Runtime does not need npm/npx; removing them avoids Trivy findings from npm's bundled deps.
+RUN rm -rf /usr/local/lib/node_modules/npm /usr/local/bin/npm /usr/local/bin/npx || true
+
 EXPOSE 3000
 
-CMD ["npm", "start"]
+CMD ["node", "src/server.js"]
