@@ -7,7 +7,9 @@ const {
   PORT = 3000,
   MONGODB_URI = 'mongodb://mongo:27017',
   MONGODB_DB = 'message_app',
-  MONGODB_COLLECTION = 'messages'
+  MONGODB_COLLECTION = 'messages',
+  MONGODB_CONNECT_RETRIES = '10',
+  MONGODB_CONNECT_RETRY_DELAY_MS = '1000'
 } = process.env;
 
 async function start() {
@@ -15,6 +17,8 @@ async function start() {
     mongodbUri: MONGODB_URI,
     mongodbDb: MONGODB_DB,
     mongodbCollection: MONGODB_COLLECTION,
+    mongodbConnectRetries: Number.parseInt(MONGODB_CONNECT_RETRIES, 10),
+    mongodbConnectRetryDelayMs: Number.parseInt(MONGODB_CONNECT_RETRY_DELAY_MS, 10),
     serveStatic: true
   });
 
@@ -27,4 +31,3 @@ start().catch((error) => {
   console.error('Failed to start server:', error);
   process.exit(1);
 });
-
