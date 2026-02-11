@@ -17,12 +17,42 @@ function formatTimestamp(date) {
   return `${day}:${month}:${year} ${hours}:${minutes}:${seconds}`;
 }
 
+function wait(ms) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+}
+
+async function connectWithRetry(client, {
+  retries = 10,
+  delayMs = 1000
+}) {
+  let lastError;
+
+  for (let attempt = 1; attempt <= retries; attempt += 1) {
+    try {
+      await client.connect();
+      return;
+    } catch (error) {
+      lastError = error;
+      if (attempt < retries) {
+        console.warn(`MongoDB connection attempt ${attempt}/${retries} failed. Retrying in ${delayMs}ms.`);
+        await wait(delayMs);
+      }
+    }
+  }
+
+  throw lastError;
+}
+
 export async function createApp({
   mongodbUri,
   mongodbDb,
   mongodbCollection,
   serveStatic = true,
-  dropDbOnClose = false
+  dropDbOnClose = false,
+  mongodbConnectRetries = 10,
+  mongodbConnectRetryDelayMs = 1000
 }) {
   if (!mongodbUri) throw new Error('mongodbUri is required');
   if (!mongodbDb) throw new Error('mongodbDb is required');
@@ -36,7 +66,10 @@ export async function createApp({
   }
 
   const client = new MongoClient(mongodbUri);
-  await client.connect();
+  await connectWithRetry(client, {
+    retries: mongodbConnectRetries,
+    delayMs: mongodbConnectRetryDelayMs
+  });
   const db = client.db(mongodbDb);
   const messagesCollectionRef = db.collection(mongodbCollection);
 
